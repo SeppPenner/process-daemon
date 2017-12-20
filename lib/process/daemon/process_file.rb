@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require 'fileutils'
+require 'sys/proctable'
 
 module Process
 	class Daemon
@@ -48,8 +49,12 @@ module Process
 				return false if pid == nil
 
 				gpid = Process.getpgid(pid) rescue nil
+				return false if gpid == nil
 
-				return gpid != nil ? true : false
+				s = ::Sys::ProcTable.ps(pid)
+				process_command = s.cmdline if s
+
+				return process_command == daemon.name
 			end
 
 			# Remove the pid file if the daemon is not running
