@@ -20,6 +20,7 @@
 
 require 'process/daemon'
 require 'process/daemon/process_file'
+require 'sys-proctable'
 
 module Process::Daemon::ProcessFileSpec
 	class SleepDaemon < Process::Daemon
@@ -44,6 +45,10 @@ module Process::Daemon::ProcessFileSpec
 		end
 		
 		it "should be running" do
+      ps = ::Struct::ProcTableStruct.new
+      allow(ps).to receive(:cmdline).and_return daemon.name
+      allow(::Sys::ProcTable).to receive(:ps).with(pid: $$).and_return ps
+
 			Process::Daemon::ProcessFile.store(daemon, $$)
 			
 			expect(Process::Daemon::ProcessFile.status(daemon)).to be :running
