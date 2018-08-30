@@ -51,7 +51,7 @@ module Process
 				gpid = Process.getpgid(pid) rescue nil
 				return false if gpid == nil
 
-				s = ::Sys::ProcTable.ps(pid)
+				s = ::Sys::ProcTable.ps(pid: pid)
 				process_command = s.cmdline if s
 
 				return process_command == daemon.name
